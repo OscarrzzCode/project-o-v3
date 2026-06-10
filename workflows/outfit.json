@@ -60,35 +60,80 @@
   },
   "7": {
     "inputs": {
-      "pixels": ["1", 0],
-      "vae": ["4", 0]
+      "pulid_model": "pulid_flux_v0.9.1.safetensors"
     },
-    "class_type": "VAEEncode",
+    "class_type": "PulidFluxModelLoader",
     "_meta": {
-      "title": "Encode Image to Latent"
+      "title": "Load PuLID Model"
     }
   },
   "8": {
     "inputs": {
-      "seed": 42,
-      "steps": 20,
+      "provider": "CPU"
+    },
+    "class_type": "PulidFluxInsightFaceLoader",
+    "_meta": {
+      "title": "Load InsightFace"
+    }
+  },
+  "9": {
+    "inputs": {
+      "image": ["1", 0]
+    },
+    "class_type": "PulidFluxEvaClipLoader",
+    "_meta": {
+      "title": "Load EVA CLIP"
+    }
+  },
+  "10": {
+    "inputs": {
+      "model": ["2", 0],
+      "pulid": ["7", 0],
+      "eva_clip": ["9", 0],
+      "face_analysis": ["8", 0],
+      "image": ["1", 0],
+      "weight": 1.0,
+      "start_at": 0.0,
+      "end_at": 1.0,
+      "method": "fidelity"
+    },
+    "class_type": "ApplyPulidFlux",
+    "_meta": {
+      "title": "Apply PuLID Identity"
+    }
+  },
+  "11": {
+    "inputs": {
+      "seed": 0,
+      "steps": 25,
       "cfg": 1.0,
       "sampler_name": "euler",
       "scheduler": "simple",
-      "denoise": 0.80,
-      "model": ["2", 0],
+      "denoise": 1.0,
+      "model": ["10", 0],
       "positive": ["5", 0],
       "negative": ["6", 0],
-      "latent_image": ["7", 0]
+      "latent_image": ["12", 0]
     },
     "class_type": "KSampler",
     "_meta": {
       "title": "KSampler"
     }
   },
-  "9": {
+  "12": {
     "inputs": {
-      "samples": ["8", 0],
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Latent Image"
+    }
+  },
+  "13": {
+    "inputs": {
+      "samples": ["11", 0],
       "vae": ["4", 0]
     },
     "class_type": "VAEDecode",
@@ -96,9 +141,9 @@
       "title": "VAE Decode"
     }
   },
-  "10": {
+  "14": {
     "inputs": {
-      "images": ["9", 0],
+      "images": ["13", 0],
       "filename_prefix": "ComfyUI"
     },
     "class_type": "SaveImage",

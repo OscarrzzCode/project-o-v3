@@ -1,12 +1,11 @@
-FROM runpod/worker-comfyui:5.8.5-base
+FROM runpod/worker-comfyui:5.8.5-flux1-dev
 
-RUN comfy-node-install \
-    ComfyUI-KJNodes \
-    ComfyUI_essentials \
-    comfyui_controlnet_aux \
-    comfyui-pulid-flux \
-    comfyui-reactor-node \
-    was-node-suite-comfyui
+RUN pip install --no-cache-dir timm facexlib insightface onnxruntime opencv-python
+
+RUN cd /comfyui/custom_nodes && \
+    git clone https://github.com/balazik/ComfyUI-PuLID-Flux.git && \
+    cd ComfyUI-PuLID-Flux && \
+    pip install -r requirements.txt 2>/dev/null || true
 
 COPY workflows/ /comfyui/user/default/workflows/
 
