@@ -1,5 +1,5 @@
 import httpx
-import time
+import asyncio
 from src.config import RUNPOD_API_KEY, RUNPOD_BASE_URL, TIMEOUT_RUNSYNC
 
 
@@ -16,18 +16,16 @@ async def run_comfyui_sync(payload: dict, timeout: int = None) -> dict:
         return response.json()
 
 
-async def run_comfyui_async(payload: dict, timeout: int = None) -> str:
-    timeout = timeout or TIMEOUT_RUNSYNC
+async def run_async(payload: dict) -> str:
     url = f"{RUNPOD_BASE_URL}/run"
     headers = {
         "Authorization": f"Bearer {RUNPOD_API_KEY}",
         "Content-Type": "application/json",
     }
-    async with httpx.AsyncClient(timeout=timeout) as client:
+    async with httpx.AsyncClient(timeout=30) as client:
         response = await client.post(url, json={"input": payload}, headers=headers)
         response.raise_for_status()
-        data = response.json()
-        return data["id"]
+        return response.json()["id"]
 
 
 async def get_job_status(runpod_job_id: str) -> dict:
@@ -41,15 +39,26 @@ async def get_job_status(runpod_job_id: str) -> dict:
 
 async def run_comfyui_sync_with_retry(payload: dict, timeout: int = None) -> dict:
     timeout = timeout or TIMEOUT_RUNSYNC
+
     try:
         return await run_comfyui_sync(payload, timeout)
-    except httpx.HTTPStatusError as e:
-        error_body = ""
+    except (httpx.HTTPStatusError, httpx.ReadTimeout):
+        pass
+
+    job_id = await run_async(payload)
+    deadline = asyncio.get_event_loop().time() + timeout
+    while asyncio.get_event_loop().time() < deadline:
         try:
-            error_body = e.response.text
-        except Exception:
-            pass
-        raise RuntimeError(f"RunPod API error {e.response.status_code}: {error_body}") from e
+            status = await get_job_status(job_id)
+        except httpx.HTTPStatusError:
+            await asyncio.sleep(2)
+            continue
+
+        if status.get("status") in ("COMPLETED", "FAILED"):
+            return status
+        await asyncio.sleep(2)
+
+    raise RuntimeError(f"Job {job_id} timed out after {timeout}s")
 
 
 async def health_check() -> dict:
