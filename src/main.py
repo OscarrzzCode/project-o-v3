@@ -84,7 +84,7 @@ async def generate(
     steps: int = Form(25),
     guidance: float = Form(3.5),
     pulid_weight: float = Form(1.0),
-    denoise_strength: float = Form(1.0),
+    denoise_strength: float = Form(0.45),
 ):
     has_pose = pose_image is not None and pose_image.filename != ""
 
@@ -121,10 +121,11 @@ async def generate(
         await update_job_status(job_id, "running")
 
         workflow = load_workflow(workflow_type)
-        workflow["5"]["inputs"]["text"] = prompt or ""
-        workflow["8"]["inputs"]["seed"] = seed
-        workflow["8"]["inputs"]["steps"] = steps
-        workflow["8"]["inputs"]["denoise"] = denoise_strength
+        workflow["5"]["inputs"]["text"] = "same person, identical face, same facial features, same identity, same appearance, same hair"
+        workflow["6"]["inputs"]["text"] = prompt or ""
+        workflow["10"]["inputs"]["seed"] = seed
+        workflow["10"]["inputs"]["steps"] = steps
+        workflow["10"]["inputs"]["denoise"] = denoise_strength
         workflow = inject_pulid_params(workflow, pulid_weight)
 
         if lora_name:

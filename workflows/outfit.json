@@ -45,7 +45,7 @@
     },
     "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "Positive Prompt"
+      "title": "Identity Prompt"
     }
   },
   "6": {
@@ -55,10 +55,30 @@
     },
     "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "Negative Prompt"
+      "title": "Edit Prompt"
     }
   },
   "7": {
+    "inputs": {
+      "text": "",
+      "clip": ["3", 0]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Negative Prompt"
+    }
+  },
+  "8": {
+    "inputs": {
+      "conditioning_from": ["5", 0],
+      "conditioning_to": ["6", 0]
+    },
+    "class_type": "ConditioningConcat",
+    "_meta": {
+      "title": "Combine Prompts"
+    }
+  },
+  "9": {
     "inputs": {
       "pixels": ["1", 0],
       "vae": ["4", 0]
@@ -68,27 +88,27 @@
       "title": "Encode to Latent"
     }
   },
-  "8": {
+  "10": {
     "inputs": {
       "seed": 0,
       "steps": 20,
       "cfg": 1.0,
       "sampler_name": "euler",
       "scheduler": "simple",
-      "denoise": 0.80,
+      "denoise": 0.45,
       "model": ["2", 0],
-      "positive": ["5", 0],
-      "negative": ["6", 0],
-      "latent_image": ["7", 0]
+      "positive": ["8", 0],
+      "negative": ["7", 0],
+      "latent_image": ["9", 0]
     },
     "class_type": "KSampler",
     "_meta": {
       "title": "KSampler"
     }
   },
-  "9": {
+  "11": {
     "inputs": {
-      "samples": ["8", 0],
+      "samples": ["10", 0],
       "vae": ["4", 0]
     },
     "class_type": "VAEDecode",
@@ -96,9 +116,9 @@
       "title": "VAE Decode"
     }
   },
-  "10": {
+  "12": {
     "inputs": {
-      "images": ["9", 0],
+      "images": ["11", 0],
       "filename_prefix": "ComfyUI"
     },
     "class_type": "SaveImage",
