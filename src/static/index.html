@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project O — Identity-Preserving Character Editor</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Project O</h1>
+            <span class="subtitle">Identity-Preserving Character Editor</span>
+            <span id="status-indicator" class="status-dot offline">●</span>
+            <span id="status-text">Checking...</span>
+        </header>
+
+        <main class="editor">
+            <section class="upload-section">
+                <div class="upload-group">
+                    <label>Reference Image*</label>
+                    <div id="ref-upload" class="upload-zone">
+                        <input type="file" id="ref-input" accept="image/*" hidden>
+                        <div class="upload-placeholder">
+                            <span class="upload-icon">+</span>
+                            <span>Click or drag image</span>
+                        </div>
+                        <img id="ref-preview" class="upload-preview" style="display:none">
+                    </div>
+                </div>
+
+                <div class="upload-group" id="second-image-group" style="display:none">
+                    <label>Pose Reference</label>
+                    <div id="pose-upload" class="upload-zone">
+                        <input type="file" id="pose-input" accept="image/*" hidden>
+                        <div class="upload-placeholder">
+                            <span class="upload-icon">+</span>
+                            <span>Add pose reference</span>
+                        </div>
+                        <img id="pose-preview" class="upload-preview" style="display:none">
+                    </div>
+                    <button id="remove-pose" class="btn-small" style="display:none">Remove</button>
+                </div>
+            </section>
+
+            <section class="prompt-section">
+                <label for="prompt-input">Describe the result you want</label>
+                <textarea id="prompt-input" placeholder="e.g. same woman in a red evening dress, professional photography, studio lighting"
+                          rows="3"></textarea>
+            </section>
+
+            <section class="settings-section">
+                <details>
+                    <summary>Advanced Settings</summary>
+                    <div class="settings-grid">
+                        <div class="setting">
+                            <label for="model-select">Checkpoint</label>
+                            <select id="model-select"></select>
+                        </div>
+                        <div class="setting">
+                            <label for="lora-select">LoRA</label>
+                            <select id="lora-select">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+                        <div class="setting">
+                            <label for="lora-strength">LoRA Strength</label>
+                            <input type="range" id="lora-strength" min="0" max="1" step="0.05" value="0.7">
+                            <span id="lora-strength-val">0.7</span>
+                        </div>
+                        <div class="setting">
+                            <label for="pulid-weight">PuLID Weight</label>
+                            <input type="range" id="pulid-weight" min="0.1" max="2" step="0.05" value="1.0">
+                            <span id="pulid-weight-val">1.0</span>
+                        </div>
+                        <div class="setting">
+                            <label for="seed-input">Seed (0=random)</label>
+                            <input type="number" id="seed-input" value="0" min="0" max="999999999">
+                        </div>
+                        <div class="setting">
+                            <label for="steps-input">Steps</label>
+                            <input type="number" id="steps-input" value="25" min="1" max="50">
+                        </div>
+                        <div class="setting">
+                            <label for="guidance-input">Guidance</label>
+                            <input type="number" id="guidance-input" value="3.5" min="1" max="10" step="0.1">
+                        </div>
+                    </div>
+                </details>
+            </section>
+
+            <section class="action-section">
+                <button id="generate-btn" class="btn-primary">Generate</button>
+                <div id="loading" class="loading" style="display:none">
+                    <div class="spinner"></div>
+                    <span>Generating...</span>
+                </div>
+            </section>
+
+            <section id="results-section" class="results-section" style="display:none">
+                <h2>Result</h2>
+                <div id="similarity-badge" class="badge"></div>
+                <div id="result-image-container">
+                    <img id="result-image" alt="Generated result">
+                </div>
+                <div class="result-actions">
+                    <button id="download-btn" class="btn-secondary">Download</button>
+                    <button id="regenerate-btn" class="btn-secondary">Generate Again</button>
+                </div>
+            </section>
+
+            <section class="history-section">
+                <h2>Recent Jobs</h2>
+                <div id="job-list" class="job-list"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

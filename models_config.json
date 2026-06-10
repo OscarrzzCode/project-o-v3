@@ -1,0 +1,23 @@
+{
+  "checkpoints": [
+    {
+      "name": "FLUX.1 Dev FP8",
+      "filename": "flux1-dev-fp8.safetensors",
+      "type": "flux"
+    }
+  ],
+  "loras": [
+    {
+      "name": "NSFW Unlock v1",
+      "filename": "nsfw_unlock_flux_v1.safetensors",
+      "type": "flux",
+      "nsfw": true
+    }
+  ],
+  "upscale_models": [
+    {
+      "name": "4x UltraSharp",
+      "filename": "4x-UltraSharp.pth"
+    }
+  ]
+}

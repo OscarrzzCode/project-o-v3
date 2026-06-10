@@ -1,0 +1,243 @@
+{
+  "1": {
+    "inputs": {
+      "image": "input_image_1.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Reference Image"
+    }
+  },
+  "2": {
+    "inputs": {
+      "unet_name": "flux1-dev-fp8.safetensors",
+      "weight_dtype": "fp8_e4m3fn"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load FLUX Model"
+    }
+  },
+  "3": {
+    "inputs": {
+      "clip_name1": "t5xxl_fp8_e4m3fn.safetensors",
+      "clip_name2": "clip_l.safetensors",
+      "type": "flux"
+    },
+    "class_type": "DualCLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "4": {
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "5": {
+    "inputs": {
+      "text": "",
+      "clip": ["3", 0]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Positive Prompt"
+    }
+  },
+  "6": {
+    "inputs": {
+      "text": "nsfw, nude, naked",
+      "clip": ["3", 0]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Negative Prompt"
+    }
+  },
+  "7": {
+    "inputs": {
+      "guidance": 3.5
+    },
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "FLUX Guidance"
+    }
+  },
+  "8": {
+    "inputs": {
+      "pulid_model": "pulid_flux_v0.9.1.safetensors"
+    },
+    "class_type": "PulidFluxModelLoader",
+    "_meta": {
+      "title": "Load PuLID Model"
+    }
+  },
+  "9": {
+    "inputs": {
+      "provider": "CPU"
+    },
+    "class_type": "PulidFluxInsightFaceLoader",
+    "_meta": {
+      "title": "Load InsightFace"
+    }
+  },
+  "10": {
+    "inputs": {
+      "image": ["1", 0]
+    },
+    "class_type": "PulidFluxEvaClipLoader",
+    "_meta": {
+      "title": "Load EVA CLIP"
+    }
+  },
+  "11": {
+    "inputs": {
+      "model": ["2", 0],
+      "pulid": ["8", 0],
+      "eva_clip": ["10", 0],
+      "face_analysis": ["9", 0],
+      "image": ["1", 0],
+      "weight": 1.0,
+      "start_at": 0.0,
+      "end_at": 1.0,
+      "method": "fidelity"
+    },
+    "class_type": "ApplyPulidFlux",
+    "_meta": {
+      "title": "Apply PuLID - Pass 1"
+    }
+  },
+  "12": {
+    "inputs": {
+      "seed": 0,
+      "steps": 25,
+      "cfg": 1.0,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1.0,
+      "model": ["11", 0],
+      "positive": ["5", 0],
+      "negative": ["6", 0],
+      "latent_image": ["13", 0]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler - Pass 1"
+    }
+  },
+  "13": {
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Latent Image"
+    }
+  },
+  "14": {
+    "inputs": {
+      "samples": ["12", 0],
+      "vae": ["4", 0]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode - Pass 1"
+    }
+  },
+  "15": {
+    "inputs": {
+      "image": ["14", 0]
+    },
+    "class_type": "FaceDetect",
+    "_meta": {
+      "title": "Detect Face from Pass 1"
+    }
+  },
+  "16": {
+    "inputs": {
+      "image": ["14", 0],
+      "mask": ["15", 0],
+      "x": 0,
+      "y": 0,
+      "width": 512,
+      "height": 512
+    },
+    "class_type": "CropFace",
+    "_meta": {
+      "title": "Crop Face Region"
+    }
+  },
+  "17": {
+    "inputs": {
+      "image": ["14", 0],
+      "mask": ["15", 0]
+    },
+    "class_type": "ImageCompositeMasked",
+    "_meta": {
+      "title": "Face Mask"
+    }
+  },
+  "18": {
+    "inputs": {
+      "image": "ComfyUI_temp_00001_.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Pass 1 Output"
+    }
+  },
+  "19": {
+    "inputs": {
+      "model": ["2", 0],
+      "pulid": ["8", 0],
+      "eva_clip": ["10", 0],
+      "face_analysis": ["9", 0],
+      "image": ["1", 0],
+      "weight": 0.5,
+      "start_at": 0.3,
+      "end_at": 1.0,
+      "method": "fidelity"
+    },
+    "class_type": "ApplyPulidFlux",
+    "_meta": {
+      "title": "Apply PuLID - Pass 2 (Face Refinement)"
+    }
+  },
+  "20": {
+    "inputs": {
+      "model": ["19", 0],
+      "clip": ["3", 0],
+      "vae": ["4", 0],
+      "image": ["18", 0],
+      "mask": ["17", 0],
+      "seed": 0,
+      "steps": 15,
+      "cfg": 1.0,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 0.4,
+      "positive": ["5", 0],
+      "negative": ["6", 0]
+    },
+    "class_type": "InpaintModelConditioning",
+    "_meta": {
+      "title": "Face Refinement Pass"
+    }
+  },
+  "21": {
+    "inputs": {
+      "images": ["20", 0],
+      "filename_prefix": "ComfyUI"
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Final Image"
+    }
+  }
+}
