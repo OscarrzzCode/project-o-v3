@@ -52,7 +52,7 @@ async def index():
 
 @app.get("/health")
 async def health():
-    result = {"backend": "ok"}
+    result = {"backend": "ok", "version": "v2-fixed"}
     try:
         rp_health_result = await rp_health()
         result["runpod"] = rp_health_result
@@ -136,8 +136,9 @@ async def generate(
             images.append({"name": f"{workflow_type}_pose.png", "image": pose_bytes})
 
         payload = build_payload(workflow, images)
-        result = await run_comfyui_sync_with_retry(payload)
 
+        result = await run_comfyui_sync_with_retry(payload)
+        
         output_images = result.get("output", {}).get("images", [])
         errors = result.get("output", {}).get("errors", [])
 
