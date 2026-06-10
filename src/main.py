@@ -1,5 +1,6 @@
 import os
 import json
+import base64
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException, Request
@@ -120,18 +121,21 @@ async def generate(
         await update_job_status(job_id, "running")
 
         workflow = load_workflow(workflow_type)
+        workflow["5"]["inputs"]["text"] = prompt or ""
+        workflow["8"]["inputs"]["seed"] = seed
+        workflow["8"]["inputs"]["steps"] = steps
+        workflow["8"]["inputs"]["denoise"] = denoise_strength
         workflow = inject_pulid_params(workflow, pulid_weight)
 
         if lora_name:
             workflow = inject_lora_params(workflow, lora_name, lora_strength)
 
-        images = [{"name": f"{workflow_type}_ref.png", "image": ref_bytes}]
+        images = [{"name": "input_image_1.png", "image": base64.b64encode(ref_bytes).decode()}]
         if has_pose:
             pose_bytes = await pose_image.read()
             images.append({"name": f"{workflow_type}_pose.png", "image": pose_bytes})
 
         payload = build_payload(workflow, images)
-
         result = await run_comfyui_sync_with_retry(payload)
 
         output_images = result.get("output", {}).get("images", [])
@@ -152,7 +156,6 @@ async def generate(
             try:
                 first_img = output_images[0]
                 if first_img.get("type") == "base64":
-                    import base64
                     img_data = first_img.get("data", "")
                     if img_data:
                         if img_data.startswith("data:"):

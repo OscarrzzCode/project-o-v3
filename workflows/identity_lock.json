@@ -65,17 +65,17 @@
     },
     "class_type": "VAEEncode",
     "_meta": {
-      "title": "Encode Image to Latent"
+      "title": "Encode to Latent"
     }
   },
   "8": {
     "inputs": {
-      "seed": 42,
-      "steps": 25,
+      "seed": 0,
+      "steps": 20,
       "cfg": 1.0,
       "sampler_name": "euler",
       "scheduler": "simple",
-      "denoise": 0.55,
+      "denoise": 0.80,
       "model": ["2", 0],
       "positive": ["5", 0],
       "negative": ["6", 0],
