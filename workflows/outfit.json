@@ -10,8 +10,8 @@
   },
   "2": {
     "inputs": {
-      "unet_name": "flux1-dev-fp8.safetensors",
-      "weight_dtype": "fp8_e4m3fn"
+      "unet_name": "flux1-dev.safetensors",
+      "weight_dtype": "default"
     },
     "class_type": "UNETLoader",
     "_meta": {
@@ -50,7 +50,7 @@
   },
   "6": {
     "inputs": {
-      "text": "nsfw, nude, naked",
+      "text": "",
       "clip": ["3", 0]
     },
     "class_type": "CLIPTextEncode",
@@ -60,89 +60,35 @@
   },
   "7": {
     "inputs": {
-      "guidance": 3.5
+      "pixels": ["1", 0],
+      "vae": ["4", 0]
     },
-    "class_type": "FluxGuidance",
+    "class_type": "VAEEncode",
     "_meta": {
-      "title": "FLUX Guidance"
+      "title": "Encode Image to Latent"
     }
   },
   "8": {
     "inputs": {
-      "pulid_model": "pulid_flux_v0.9.1.safetensors"
-    },
-    "class_type": "PulidFluxModelLoader",
-    "_meta": {
-      "title": "Load PuLID Model"
-    }
-  },
-  "9": {
-    "inputs": {
-      "provider": "CPU"
-    },
-    "class_type": "PulidFluxInsightFaceLoader",
-    "_meta": {
-      "title": "Load InsightFace"
-    }
-  },
-  "10": {
-    "inputs": {
-      "image": ["1", 0]
-    },
-    "class_type": "PulidFluxEvaClipLoader",
-    "_meta": {
-      "title": "Load EVA CLIP"
-    }
-  },
-  "11": {
-    "inputs": {
-      "model": ["2", 0],
-      "pulid": ["8", 0],
-      "eva_clip": ["10", 0],
-      "face_analysis": ["9", 0],
-      "image": ["1", 0],
-      "weight": 1.0,
-      "start_at": 0.0,
-      "end_at": 1.0,
-      "method": "fidelity"
-    },
-    "class_type": "ApplyPulidFlux",
-    "_meta": {
-      "title": "Apply PuLID Identity"
-    }
-  },
-  "12": {
-    "inputs": {
-      "seed": 0,
-      "steps": 25,
+      "seed": 42,
+      "steps": 20,
       "cfg": 1.0,
       "sampler_name": "euler",
       "scheduler": "simple",
-      "denoise": 1.0,
-      "model": ["11", 0],
+      "denoise": 0.80,
+      "model": ["2", 0],
       "positive": ["5", 0],
-      "negative": ["5", 0],
-      "latent_image": ["13", 0]
+      "negative": ["6", 0],
+      "latent_image": ["7", 0]
     },
     "class_type": "KSampler",
     "_meta": {
       "title": "KSampler"
     }
   },
-  "13": {
+  "9": {
     "inputs": {
-      "width": 1024,
-      "height": 1024,
-      "batch_size": 1
-    },
-    "class_type": "EmptyLatentImage",
-    "_meta": {
-      "title": "Latent Image"
-    }
-  },
-  "14": {
-    "inputs": {
-      "samples": ["12", 0],
+      "samples": ["8", 0],
       "vae": ["4", 0]
     },
     "class_type": "VAEDecode",
@@ -150,9 +96,9 @@
       "title": "VAE Decode"
     }
   },
-  "15": {
+  "10": {
     "inputs": {
-      "images": ["14", 0],
+      "images": ["9", 0],
       "filename_prefix": "ComfyUI"
     },
     "class_type": "SaveImage",

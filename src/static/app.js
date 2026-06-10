@@ -91,8 +91,6 @@ function setupImageUpload(zoneId, inputId, previewId, onFile) {
     const preview = document.getElementById(previewId);
     const placeholder = zone.querySelector('.upload-placeholder');
 
-    zone.addEventListener('click', () => input.click());
-
     zone.addEventListener('dragover', (e) => {
         e.preventDefault();
         zone.style.borderColor = '#4ade80';
