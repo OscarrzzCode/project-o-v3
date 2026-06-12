@@ -121,7 +121,6 @@ async def generate(
         await update_job_status(job_id, "running")
 
         workflow = load_workflow(workflow_type)
-        workflow["5"]["inputs"]["text"] = "same person, identical face, same facial features, same identity, same appearance, same hair"
         workflow["6"]["inputs"]["text"] = prompt or ""
         workflow["10"]["inputs"]["seed"] = seed
         workflow["10"]["inputs"]["steps"] = steps

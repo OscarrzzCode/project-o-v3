@@ -1,15 +1,16 @@
-FROM runpod/worker-comfyui:5.8.5-flux1-dev
+FROM runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04
 
-RUN pip install --no-cache-dir timm facexlib insightface onnxruntime opencv-python einops
+RUN apt-get update && apt-get install -y unzip git wget && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /comfyui/custom_nodes
-ADD https://github.com/balazik/ComfyUI-PuLID-Flux/archive/refs/heads/master.zip /tmp/pulid-flux.zip
-RUN unzip -q /tmp/pulid-flux.zip && mv ComfyUI-PuLID-Flux-master ComfyUI-PuLID-Flux && rm /tmp/pulid-flux.zip && pip install --no-cache-dir -r ComfyUI-PuLID-Flux/requirements.txt
+RUN git clone --depth 1 https://github.com/comfyanonymous/ComfyUI.git /opt/ComfyUI
 
-ADD https://github.com/cubiq/ComfyUI_IPAdapter_plus/archive/refs/heads/main.zip /tmp/ipadapter.zip
-RUN unzip -q /tmp/ipadapter.zip && mv ComfyUI_IPAdapter_plus-main ComfyUI_IPAdapter_plus && rm /tmp/ipadapter.zip
+WORKDIR /opt/ComfyUI
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY workflows/ /comfyui/user/default/workflows/
+RUN pip install --no-cache-dir timm facexlib insightface onnxruntime onnxruntime-gpu opencv-python einops huggingface_hub
 
-ENV COMFY_LOG_LEVEL=INFO
-ENV REFRESH_WORKER=false
+COPY startup.sh /opt/startup.sh
+RUN chmod +x /opt/startup.sh
+
+WORKDIR /workspace
+CMD ["/opt/startup.sh"]

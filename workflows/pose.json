@@ -40,7 +40,7 @@
   },
   "5": {
     "inputs": {
-      "text": "",
+      "text": "same person, identical face, same facial features, same identity, same appearance, same hair",
       "clip": ["3", 0]
     },
     "class_type": "CLIPTextEncode",
