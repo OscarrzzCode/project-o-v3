@@ -1,0 +1,20 @@
+{
+  "outfit_changes": [
+    "same person wearing a black business suit, professional portrait, studio lighting",
+    "same person wearing construction PPE, safety helmet, reflective vest, industrial site",
+    "same person wearing an elegant red evening dress, luxury hotel lobby, chandelier lighting",
+    "same person wearing casual street clothes, jeans and hoodie, urban background"
+  ],
+  "pose_changes": [
+    "same person standing with arms crossed, confident expression, headshot",
+    "same person sitting at a desk, professional office environment",
+    "same person walking down a city street, candid shot, natural lighting",
+    "same person standing confidently, hands on hips, full body shot"
+  ],
+  "background_changes": [
+    "same person at a construction site, industrial background, safety gear visible",
+    "same person in a modern office, glass windows, natural light",
+    "same person at an outdoor cafe, urban street, afternoon light",
+    "same person in a luxury hotel lobby, marble floors, elegant interior"
+  ]
+}

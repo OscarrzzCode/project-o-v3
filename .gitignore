@@ -6,3 +6,7 @@ data/
 .DS_Store
 Backup/
 SESSION_BACKUP_RAW.md
+benchmark/images/*.jpg
+benchmark/images/*.png
+benchmark/results/*.csv
+benchmark/results/*.json
