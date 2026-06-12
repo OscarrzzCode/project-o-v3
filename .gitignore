@@ -4,3 +4,5 @@ data/
 .env
 *.db
 .DS_Store
+Backup/
+SESSION_BACKUP_RAW.md
