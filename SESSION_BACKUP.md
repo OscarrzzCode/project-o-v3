@@ -462,3 +462,32 @@ POST /upload/image            â†’ Upload image file
   }
 }
 ```
+
+---
+
+## 13. Phase 2 Progress (2026-06-13)
+
+### Accomplishments
+
+| Item | Detail |
+|---|---|
+| Docker image built | oscarrzz/project-o:latest — 67GB, FLUX 16-bit baked in |
+| Image on Docker Hub | sha256:f2ca675f8c — pushed |
+| Pod running | kvqmnc6que4ldb — RTX PRO 6000 Blackwell (97GB VRAM), 188GB RAM |
+| ComfyUI running | Port 8188 ?? — verified via curl localhost:8188/queue |
+| FLUX tested | ? Basic txt2img works (1 image) |
+| PuLID extension loaded | ? 0.5s load time |
+| PyTorch for Blackwell | ? 2.12.0+cu130 auto-upgraded |
+| Disk cleaned | 75GB freed (caches + Docker prune) |
+
+### Not Yet Tested
+- ? PuLID-FLUX workflow (queued but result pending)
+- ? Backend pod manager (pod_manager.py, comfyui_client.py)
+- ? Benchmark framework
+
+### Pod Access
+- Web Terminal: https://www.runpod.io/console/user/pod/kvqmnc6que4ldb
+- SSH: 157.157.221.177:15704 (unstable — use Web Terminal instead)
+- Cost: ~$0.50/hr (remember to STOP when done)
+
+### Next: Test PuLID ? build backend ? benchmark
